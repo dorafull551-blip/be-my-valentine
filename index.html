@@ -14,11 +14,10 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%);
-            background-color: #ffdde1; /* Fallback */
+            background-color: #ffdde1; 
             background-image: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             font-family: 'Poppins', sans-serif;
-            overflow: hidden; /* Prevents scrollbars when button moves */
+            overflow: hidden; 
         }
 
         .container {
@@ -82,10 +81,9 @@
             background-color: #e2e2e2;
             color: #333;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative; 
+            transition: all 0.2s ease;
         }
 
-        /* Message that appears after clicking Yes */
         .success-message {
             display: none;
             text-align: center;
@@ -98,7 +96,6 @@
             margin-top: 15px;
         }
         
-        /* Video styling */
         video {
             width: 100%;
             border-radius: 15px;
@@ -106,14 +103,13 @@
             background: #000;
         }
 
-        /* Floating Hearts Animation Background */
         .heart {
             position: absolute;
             color: #ff4b6e;
             opacity: 0.5;
             animation: float 6s linear infinite;
             z-index: 1;
-            pointer-events: none; /* So they don't block clicks */
+            pointer-events: none;
         }
 
         @keyframes float {
@@ -121,7 +117,6 @@
             50% { opacity: 0.6; }
             100% { transform: translateY(-10vh) scale(1); opacity: 0; }
         }
-
     </style>
 </head>
 <body>
@@ -138,12 +133,11 @@
 
         <div class="buttons">
             <button class="yes-btn" onclick="sayYes()">YES!</button>
-            <button class="no-btn" id="noBtn" onmouseover="moveButton()">NO</button>
+            <button class="no-btn" id="noBtn" onmouseover="moveButton()" onclick="moveButton()">NO</button>
         </div>
     </div>
 
     <div class="container success-message" id="success-card">
-        
         <video id="valentineVideo" controls playsinline>
             <source src="video.mp4" type="video/mp4">
             Your browser does not support the video tag.
@@ -154,72 +148,59 @@
     </div>
 
     <script>
-        // JavaScript: The Logic
-
+        // Move the "No" button randomly
         function moveButton() {
             const noBtn = document.getElementById('noBtn');
-            
-            // Get the window width and height
             const maxWidth = window.innerWidth - noBtn.offsetWidth;
             const maxHeight = window.innerHeight - noBtn.offsetHeight;
 
-            // Generate random coordinates
             const randomX = Math.floor(Math.random() * maxWidth);
             const randomY = Math.floor(Math.random() * maxHeight);
 
-            // Apply the new coordinates
             noBtn.style.position = 'fixed'; 
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
         }
 
-        // Add touch support for mobile (so it moves when tapped on phone)
-        document.getElementById('noBtn').addEventListener('touchstart', function(e) {
-            e.preventDefault(); 
-            moveButton();
-        });
-
+        // Logic for clicking "Yes"
         function sayYes() {
-            // Hide the question card
             document.getElementById('main-card').style.display = 'none';
-            
-            // Show the success card
             const successCard = document.getElementById('success-card');
             successCard.style.display = 'block';
             
-            // Play the video
             const video = document.getElementById('valentineVideo');
-            video.play().catch(error => {
-                // Auto-play might be blocked by browser policies, so we log it just in case
-                console.log("Auto-play prevented, user must click play.");
-            });
+            
+            // Modern browsers return a promise on .play()
+            const playPromise = video.play();
 
-            // Create a confetti explosion of hearts
-            createHearts();
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.log("Autoplay prevented. User needs to click play on the video.");
+                });
+            }
+
+            // Start the celebration hearts
+            setInterval(createHearts, 300);
         }
 
-        // Function to create floating background hearts
+        // Floating hearts background
         function createHearts() {
             const container = document.body;
-            for (let i = 0; i < 20; i++) {
-                const heart = document.createElement('div');
-                heart.classList.add('heart');
-                heart.innerHTML = '❤️';
-                heart.style.left = Math.random() * 100 + 'vw';
-                heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
-                heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                container.appendChild(heart);
-                
-                // Remove heart after animation
-                setTimeout(() => {
-                    heart.remove();
-                }, 6000);
-            }
+            const heart = document.createElement('div');
+            heart.classList.add('heart');
+            heart.innerHTML = '❤️';
+            heart.style.left = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
+            container.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 6000);
         }
 
-        // Start background hearts immediately
-        setInterval(createHearts, 500);
-
+        // Initial slow flow of hearts
+        setInterval(createHearts, 700);
     </script>
 </body>
 </html>
