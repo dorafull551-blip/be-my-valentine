@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Be my valentine</title>
+    <title>For Narangarav</title>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;600&display=swap" rel="stylesheet">
     <style>
         /* CSS: The Styles */
@@ -23,24 +23,27 @@
 
         .container {
             text-align: center;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.85);
             padding: 40px;
             border-radius: 20px;
             box-shadow: 0 10px 30px rgba(0,0,0,0.1);
             position: relative;
             z-index: 10;
             max-width: 90%;
+            width: 400px;
         }
 
         h1 {
             font-family: 'Pacifico', cursive;
             color: #ff4b6e;
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             margin-bottom: 20px;
+            line-height: 1.3;
         }
 
         .gif-container img {
-            width: 200px;
+            width: 100%;
+            max-width: 250px;
             border-radius: 15px;
             margin-bottom: 20px;
         }
@@ -50,7 +53,7 @@
             justify-content: center;
             gap: 20px;
             margin-top: 20px;
-            position: relative; /* Needed for absolute positioning of No button */
+            position: relative; 
         }
 
         button {
@@ -79,7 +82,7 @@
             background-color: #e2e2e2;
             color: #333;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            position: relative; /* Initial position */
+            position: relative; 
         }
 
         /* Message that appears after clicking Yes */
@@ -91,7 +94,16 @@
         .success-message h2 {
             font-family: 'Pacifico', cursive;
             color: #ff4b6e;
-            font-size: 2rem;
+            font-size: 1.8rem;
+            margin-top: 15px;
+        }
+        
+        /* Video styling */
+        video {
+            width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background: #000;
         }
 
         /* Floating Hearts Animation Background */
@@ -101,6 +113,7 @@
             opacity: 0.5;
             animation: float 6s linear infinite;
             z-index: 1;
+            pointer-events: none; /* So they don't block clicks */
         }
 
         @keyframes float {
@@ -117,7 +130,7 @@
 
     <div class="container" id="main-card">
         <div class="gif-container">
-            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmM2Z202aGszZnd4Y281d2Z5bm5rZzB2ZmF4bW14aW14aW14aW14aCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute Bear">
+            <img src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExbmM2Z202aGszZnd4Y281d2Z5bm5rZzB2ZmF4bW14aW14aW14aCZlcD12MV9zdGlja2Vyc19zZWFyY2gmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" alt="Cute Bear">
         </div>
         
         <h1>Narangarav, will you be my Valentine?</h1>
@@ -130,12 +143,14 @@
     </div>
 
     <div class="container success-message" id="success-card">
-        <div class="gif-container">
-            <img src="https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdTF6aGx3NzNjdG1wNGlhNWJjdXRsNnVxMzhrdTRsbHZsZmszNHpsciZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/1JmGiBtqTuehfYxuy9/giphy.gif" alt="Excited Cat">
-        </div>
+        
+        <video id="valentineVideo" controls playsinline>
+            <source src="video.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+
         <h2>Yay! I knew you would say yes! ❤️</h2>
-        <p>See you soon, Narangarav!</p>
-        <p>ХАЙРТАЙ ШҮҮ ХАЙРАА</p>
+        <p>Watch this video I made for you...</p>
     </div>
 
     <script>
@@ -153,24 +168,32 @@
             const randomY = Math.floor(Math.random() * maxHeight);
 
             // Apply the new coordinates
-            noBtn.style.position = 'fixed'; // Change to fixed to allow full screen movement
+            noBtn.style.position = 'fixed'; 
             noBtn.style.left = randomX + 'px';
             noBtn.style.top = randomY + 'px';
         }
 
         // Add touch support for mobile (so it moves when tapped on phone)
         document.getElementById('noBtn').addEventListener('touchstart', function(e) {
-            e.preventDefault(); // Prevent clicking
+            e.preventDefault(); 
             moveButton();
         });
 
         function sayYes() {
             // Hide the question card
             document.getElementById('main-card').style.display = 'none';
+            
             // Show the success card
             const successCard = document.getElementById('success-card');
             successCard.style.display = 'block';
             
+            // Play the video
+            const video = document.getElementById('valentineVideo');
+            video.play().catch(error => {
+                // Auto-play might be blocked by browser policies, so we log it just in case
+                console.log("Auto-play prevented, user must click play.");
+            });
+
             // Create a confetti explosion of hearts
             createHearts();
         }
@@ -187,7 +210,7 @@
                 heart.style.animationDuration = (Math.random() * 3 + 2) + 's';
                 container.appendChild(heart);
                 
-                // Remove heart after animation to keep DOM clean
+                // Remove heart after animation
                 setTimeout(() => {
                     heart.remove();
                 }, 6000);
