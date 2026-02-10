@@ -10,14 +10,15 @@
         body {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
             background-color: #ffdde1; 
             background-image: linear-gradient(to top, #ff9a9e 0%, #fecfef 99%, #fecfef 100%);
             font-family: 'Poppins', sans-serif;
-            overflow: hidden; 
+            overflow-x: hidden; /* Prevent horizontal scroll */
+            /* Removed overflow-y: hidden so she can scroll if the video is tall */
         }
 
         .container {
@@ -30,6 +31,13 @@
             z-index: 10;
             max-width: 90%;
             width: 400px;
+        }
+        
+        /* Mobile adjustment for padding */
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
         }
 
         h1 {
@@ -96,11 +104,13 @@
             margin-top: 15px;
         }
         
-        video {
+        /* Style specifically for the YouTube embed */
+        iframe {
             width: 100%;
+            height: 450px; /* Perfect height for vertical Shorts */
             border-radius: 15px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-            background: #000;
+            border: none;
         }
 
         .heart {
@@ -138,10 +148,13 @@
     </div>
 
     <div class="container success-message" id="success-card">
-        <video id="valentineVideo" controls playsinline>
-            <source src="video.mp4" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
+        
+        <iframe id="valentineVideo" 
+                src="" 
+                title="Valentine Video" 
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                allowfullscreen>
+        </iframe>
 
         <h2>Yay! I knew you would say yes! ❤️</h2>
         <p>Watch this video I made for you...</p>
@@ -154,30 +167,34 @@
             const maxWidth = window.innerWidth - noBtn.offsetWidth;
             const maxHeight = window.innerHeight - noBtn.offsetHeight;
 
-            const randomX = Math.floor(Math.random() * maxWidth);
-            const randomY = Math.floor(Math.random() * maxHeight);
+            // Ensure the button stays within the viewport
+            const randomX = Math.floor(Math.random() * (maxWidth - 20));
+            const randomY = Math.floor(Math.random() * (maxHeight - 20));
 
             noBtn.style.position = 'fixed'; 
-            noBtn.style.left = randomX + 'px';
-            noBtn.style.top = randomY + 'px';
+            noBtn.style.left = Math.max(0, randomX) + 'px';
+            noBtn.style.top = Math.max(0, randomY) + 'px';
         }
+
+        // Add touch support for mobile
+        document.getElementById('noBtn').addEventListener('touchstart', function(e) {
+            e.preventDefault(); 
+            moveButton();
+        });
 
         // Logic for clicking "Yes"
         function sayYes() {
             document.getElementById('main-card').style.display = 'none';
-            const successCard = document.getElementById('success-card');
-            successCard.style.display = 'block';
+            document.getElementById('success-card').style.display = 'block';
             
-            const video = document.getElementById('valentineVideo');
+            // This is the Magic Link!
+            // It embeds your specific video ID (MJhjSpsKsew)
+            // autoplay=1: Starts playing immediately
+            // loop=1 & playlist=...: Makes it repeat over and over
+            // playsinline=1: Keeps it inside the card on iPhone
+            const videoUrl = "https://www.youtube.com/embed/MJhjSpsKsew?autoplay=1&playsinline=1&loop=1&playlist=MJhjSpsKsew&rel=0";
             
-            // Modern browsers return a promise on .play()
-            const playPromise = video.play();
-
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.log("Autoplay prevented. User needs to click play on the video.");
-                });
-            }
+            document.getElementById('valentineVideo').src = videoUrl;
 
             // Start the celebration hearts
             setInterval(createHearts, 300);
